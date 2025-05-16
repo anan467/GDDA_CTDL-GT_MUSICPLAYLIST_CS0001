@@ -210,6 +210,17 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
                     }
                 } while (swapped);
             }
+            //xóa hết danh sách 
+            public void Clear()
+            {
+                NodeSong current = FirstSong;
+                while (SongCount > 0)
+                {
+                    RemoveAt(current.SongTitle);
+                    current= current.NextNode;
+                    SongCount--;
+                }
+            }
             //nút chuyển tiếp nhạc
             public void Next()
             {
@@ -570,6 +581,13 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
 
                 MessageBox.Show("Songs added successfully.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private void btclear_Click(object sender, EventArgs e)
+        {
+            playList.Clear();        // Xoá tất cả trong danh sách liên kết
+            listBox1.Items.Clear();  // Xoá danh sách hiển thị trên giao diện
+            MessageBox.Show("Playlist cleared.");
         }
     }
 

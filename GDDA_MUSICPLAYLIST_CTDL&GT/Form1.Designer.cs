@@ -43,6 +43,7 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.btAddAll = new System.Windows.Forms.Button();
+            this.btclear = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -68,6 +69,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.splitContainer1.Panel2.Controls.Add(this.btclear);
             this.splitContainer1.Panel2.Controls.Add(this.lblTOTALTIME);
             this.splitContainer1.Panel2.Controls.Add(this.lbCURRENTTIME);
             this.splitContainer1.Panel2.Controls.Add(this.trackBar1);
@@ -146,7 +148,7 @@
             // 
             // btPREVIOUS
             // 
-            this.btPREVIOUS.Location = new System.Drawing.Point(103, 366);
+            this.btPREVIOUS.Location = new System.Drawing.Point(103, 351);
             this.btPREVIOUS.Name = "btPREVIOUS";
             this.btPREVIOUS.Size = new System.Drawing.Size(76, 37);
             this.btPREVIOUS.TabIndex = 8;
@@ -156,7 +158,7 @@
             // 
             // btNEXT
             // 
-            this.btNEXT.Location = new System.Drawing.Point(329, 366);
+            this.btNEXT.Location = new System.Drawing.Point(329, 351);
             this.btNEXT.Name = "btNEXT";
             this.btNEXT.Size = new System.Drawing.Size(76, 37);
             this.btNEXT.TabIndex = 7;
@@ -166,7 +168,7 @@
             // 
             // btPLAY
             // 
-            this.btPLAY.Location = new System.Drawing.Point(185, 366);
+            this.btPLAY.Location = new System.Drawing.Point(185, 351);
             this.btPLAY.Name = "btPLAY";
             this.btPLAY.Size = new System.Drawing.Size(138, 37);
             this.btPLAY.TabIndex = 6;
@@ -195,6 +197,16 @@
             this.btAddAll.Text = "ADD";
             this.btAddAll.UseVisualStyleBackColor = true;
             this.btAddAll.Click += new System.EventHandler(this.btAddAll_Click);
+            // 
+            // btclear
+            // 
+            this.btclear.Location = new System.Drawing.Point(103, 394);
+            this.btclear.Name = "btclear";
+            this.btclear.Size = new System.Drawing.Size(302, 23);
+            this.btclear.TabIndex = 12;
+            this.btclear.Text = "CLEAR";
+            this.btclear.UseVisualStyleBackColor = true;
+            this.btclear.Click += new System.EventHandler(this.btclear_Click);
             // 
             // Form1
             // 
@@ -230,6 +242,7 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button btSORT;
         private System.Windows.Forms.Button btAddAll;
+        private System.Windows.Forms.Button btclear;
     }
 }
 

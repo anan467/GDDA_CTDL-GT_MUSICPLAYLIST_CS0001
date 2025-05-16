@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.btSORT = new System.Windows.Forms.Button();
-            this.btADD = new System.Windows.Forms.Button();
             this.btREMOVE = new System.Windows.Forms.Button();
             this.btSWAP = new System.Windows.Forms.Button();
             this.btINSERT = new System.Windows.Forms.Button();
@@ -43,6 +42,7 @@
             this.btPLAY = new System.Windows.Forms.Button();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.btAddAll = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -59,8 +59,8 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.splitContainer1.Panel1.Controls.Add(this.btAddAll);
             this.splitContainer1.Panel1.Controls.Add(this.btSORT);
-            this.splitContainer1.Panel1.Controls.Add(this.btADD);
             this.splitContainer1.Panel1.Controls.Add(this.btREMOVE);
             this.splitContainer1.Panel1.Controls.Add(this.btSWAP);
             this.splitContainer1.Panel1.Controls.Add(this.btINSERT);
@@ -88,16 +88,6 @@
             this.btSORT.Text = "SORT";
             this.btSORT.UseVisualStyleBackColor = true;
             this.btSORT.Click += new System.EventHandler(this.btSORT_Click);
-            // 
-            // btADD
-            // 
-            this.btADD.Location = new System.Drawing.Point(64, 50);
-            this.btADD.Name = "btADD";
-            this.btADD.Size = new System.Drawing.Size(138, 37);
-            this.btADD.TabIndex = 4;
-            this.btADD.Text = "ADD";
-            this.btADD.UseVisualStyleBackColor = true;
-            this.btADD.Click += new System.EventHandler(this.btADD_Click);
             // 
             // btREMOVE
             // 
@@ -191,11 +181,20 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(524, 303);
             this.listBox1.TabIndex = 0;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // btAddAll
+            // 
+            this.btAddAll.Location = new System.Drawing.Point(64, 53);
+            this.btAddAll.Name = "btAddAll";
+            this.btAddAll.Size = new System.Drawing.Size(138, 32);
+            this.btAddAll.TabIndex = 12;
+            this.btAddAll.Text = "ADD";
+            this.btAddAll.UseVisualStyleBackColor = true;
+            this.btAddAll.Click += new System.EventHandler(this.btAddAll_Click);
             // 
             // Form1
             // 
@@ -218,8 +217,6 @@
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Button btSORT;
-        private System.Windows.Forms.Button btADD;
         private System.Windows.Forms.Button btREMOVE;
         private System.Windows.Forms.Button btSWAP;
         private System.Windows.Forms.Button btINSERT;
@@ -231,6 +228,8 @@
         private System.Windows.Forms.Label lblTOTALTIME;
         private System.Windows.Forms.Label lbCURRENTTIME;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Button btSORT;
+        private System.Windows.Forms.Button btAddAll;
     }
 }
 

@@ -21,17 +21,18 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
         private WMPLib.WindowsMediaPlayer player;
         bool isDragging = false;
         public Form1()
-        { 
+        {
             //thêm các sự kiện có trong giao diện
             InitializeComponent();
             player = new WMPLib.WindowsMediaPlayer();
-           // người dùng có thể lựa chọn đoạn nhạc muốn nghe trên trackbar 
+            // người dùng có thể lựa chọn đoạn nhạc muốn nghe trên trackbar 
             trackBar1.MouseDown += TrackBar1_MouseDown;
             trackBar1.MouseUp += TrackBar1_MouseUp;
             timer1.Tick += timer1_Tick;
             //kiểm tra trạng thái phát của bài nhạc 
             player.PlayStateChange += Player_PlayStateChange;
         }
+
         internal class NodeSong
         {
             public string PathToFile { get; set; }// đường dẫn nhạc 
@@ -47,7 +48,7 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
                 NextNode = null;
             }
 
-            public override string ToString()
+            public override string ToString()// để hiện tên bài hát 
             {
                 return SongTitle;
             }
@@ -59,7 +60,7 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
             public NodeSong LastSong { get; private set; } = null;// nút cuối cùng trong danh sách phát
             public NodeSong CurrentSong { get; set; }// nút chỉ bài hát đang phất
             public int SongCount { get; private set; }// số lượng bài hát có trong danh sách 
-
+            //thêm bài hát vào danh sách phát
             public void Add(string path, string title)
             {
                 NodeSong newNode = new NodeSong(path, title);
@@ -69,22 +70,22 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
                 }
                 else
                 {
-                    FirstSong.NextNode = newNode;
-                    newNode.PreviousNode = FirstSong;
-                    newNode.NextNode = LastSong;
-                    LastSong.PreviousNode  = newNode;
+                    LastSong.NextNode = newNode;
+                    newNode.PreviousNode = LastSong;
+                    LastSong = newNode;
                 }
                 SongCount++;
             }
-            //dùng cho removeAt để bỏ bài nhạc mà không cần phải đếm số thứ tự bài hát để loại bỏ
-            public NodeSong Searching(string keyword)
-            {
-                string lowerKeyword = keyword.ToLower(); // chuẩn hóa từ khóa về chữ thường
-                NodeSong current = FirstSong;
 
-                while (current != null)
+
+            //dùng cho removeAt để bỏ bài nhạc mà không cần phải đếm số thứ tự bài hát để loại bỏ
+            public NodeSong Searching(string title)
+            {
+                string lowertitle = title.ToLower(); // chuẩn hóa từ khóa về chữ thường
+                NodeSong current = FirstSong;
+                while (current != null)// phải kiểm tra xem current có đang null hay không không thì sx gặp lỗi Object reference not set to an instance of an object.
                 {
-                    if (current.SongTitle.ToLower().Contains(lowerKeyword))
+                    if (current.SongTitle.ToLower() == lowertitle)
                     {
                         return current;
                     }
@@ -94,7 +95,7 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
                 return null;
             }
             //xóa bài hát khỏi danh sách phát 
-            public void RemoveAt( string title)
+            public void RemoveAt(string title)
             {
                 NodeSong current = Searching(title);
                 if (current == null) return;
@@ -105,19 +106,20 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
                     current.PreviousNode.NextNode = current.NextNode;
 
                 if (current == FirstSong)
-                    FirstSong = current.NextNode;//đầu danh sách là bài hát sau bài đã bị xóa
+                    FirstSong = current.NextNode;//cập nhật lại danh sách sau khi bài đâu danh sách bị xóa đi 
                 if (current == LastSong)
-                    LastSong = current.PreviousNode;
+                    LastSong = current.PreviousNode;//cập nhật lại danh sách sau khi bài cuối danh sách bị xóa đi 
 
                 SongCount--;
             }
+          
             // Tìm node tại chỉ số index dùng cho insert
             public NodeSong Find(int index)
             {
                 if (index < 0 || index >= SongCount) return null;
 
                 NodeSong current = FirstSong;
-                int i = 0;
+                int i = 0;// i bắt đầu là 0
                 while (current != null)
                 {
                     if (i == index) return current;
@@ -126,29 +128,26 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
                 }
                 return null;
             }
-
-            // Chèn vào vị trí bất kỳ
+            // Chèn vào vị trí bất kỳ mà không cần nhập tên bài hát chỉ cần nhập vị trí bai nhạc 
             public void Insert(int index, string path, string title)
             {
                 NodeSong newNode = new NodeSong(path, title);
 
-                if (index <= 0 || FirstSong == null)
+                if (index <= 0 || (FirstSong == null && LastSong == null))
                 {
-                    newNode.NextNode = FirstSong;
-                    if (FirstSong != null)
-                        FirstSong.PreviousNode = newNode;
-                    FirstSong = newNode;
-                    if (LastSong == null) LastSong = newNode;
+                    FirstSong = LastSong = newNode;
                 }
                 else
                 {
-                    NodeSong prev = Find(index - 1);
-                    if (prev == null)
-                    {
-                        Add(path, title);
-                        return;
-                    }
-
+                    /* nếu viết là :
+               NdoeSong  prev = Find (index);
+                    newNode.NextNode = prev.NextNode;
+                    prev.NextNode = newNode;
+                    newNode.PreviousNode = prev;
+                    sẽ dễ bị gặp lỗi NullReferenceException khi lỡ Previous.next ban đầu trỏ tới null 
+                    -> xử lý bằng cách sử dụng next làm trung gian và tạo điều kiện cho nó khi nó null 
+                  */
+                    NodeSong prev = Find(index-1);// tìm vị trí bài nhạc đứng trước để chèn vào 
                     NodeSong next = prev.NextNode;
                     prev.NextNode = newNode;
                     newNode.PreviousNode = prev;
@@ -218,6 +217,8 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
                 {
                     CurrentSong = CurrentSong.NextNode;
                 }
+                else
+                    CurrentSong = null;// đảm bảo không lặp mãi mãi một vòng lặp trong PlayNextSong
             }
             //nút lùi nhạc
             public void Previous()
@@ -240,69 +241,7 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
             }
         }
         private DoubleLinkedList playList = new DoubleLinkedList();
-        private void btADD_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();// để mở ra File Explorer
-            openFileDialog.Filter = "Audio Files|*.mp3;*.wav;*.wma";// lọc các đạng file nhạc phù hợp.
-            openFileDialog.Title = "Select a Song File";
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK) // hiển thị ra hộp thọai, nếu bấm Open thì điều kiện được kích hoạt.
-            {
-                string path = openFileDialog.FileName;
-                string title = Path.GetFileNameWithoutExtension(path).Trim();// Trả về tên file từ một đường dẫn đầy đủ, nhưng loại bỏ phần mở rộng (ví dụ: .txt, .jpg, .pdf,...).
-                                                                             // đồn thời loại bỏ các khoảng trắng ở đầu và cuối chuỗi đường dẫn 
-               //kiểm tra bài mới thêm vào có trùng tên với bài đã có trong danh sách hay không?
-                bool exists = listBox1.Items.Cast<string>() //ép tất cả các phần tử trong danh sách về kiểu string.
-                                .Any(item => item.Equals(title, StringComparison.OrdinalIgnoreCase));//trong thư viện linq dùng để kiểm tra xem có ít nhất mọt phần tử thỏa mãn điều kiện không?
-                                                                                                     //StringComparison.OrdinalIgnoreCase là tùy chọn so sánh. So sánh chính xác byte(ordinal), nhưng không phân biệt chữ hoa/ chữ thường.
-
-                if (exists)
-                {
-                    DialogResult result = MessageBox.Show(
-                "This song already exists in the list. Do you still want to add it again?",
-                "Notification",
-                MessageBoxButtons.OKCancel,
-                MessageBoxIcon.Question);
-
-                    if (result == DialogResult.Cancel)
-                        return; // Người dùng chọn không thêm → thoát
-                }
-
-                // Thêm bài hát
-                playList.Add(path, title);
-                playList.CurrentSong = playList.LastSong;
-                listBox1.Items.Add(title);
-
-            }
-        }
         private List<string> originalSongs = new List<string>(); // Lưu danh sách gốc
-        private bool isFiltered = false; // Kiểm tra trạng thái lọc
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listBox1.SelectedIndex != -1)
-            {
-                string selectedSong = listBox1.SelectedItem.ToString();
-
-                // Nếu đang ở chế độ lọc, hiển thị lại toàn bộ danh sách
-                if (isFiltered)
-                {
-                    listBox1.Items.Clear();
-                    listBox1.Items.AddRange(originalSongs.ToArray());
-                    isFiltered = false;
-
-                    // Giữ nguyên bài hát đã chọn
-                    listBox1.SelectedItem = selectedSong;
-                }
-
-                // Cập nhật bài hát hiện tại và phát nhạc
-                var node = playList.Searching(selectedSong);
-                if (node != null)
-                {
-                    playList.CurrentSong = node;
-                    // Thêm code phát nhạc ở đây nếu cần
-                }
-            }
-        }
         private void UpdateMusicListBox()
         {
             listBox1.Items.Clear(); // Xóa danh sách hiện tại trong ListBox
@@ -318,63 +257,10 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
             originalSongs = allSongs.Select(s => s.SongTitle).ToList();
 
             if (allSongs.Count == 0)
-{
-    originalSongs.Clear();
-}
-
-
-        }
-        private void PlaySelectedSong(string filePath)//nút phát nhạc đang được chọn, tức là phải chọn bài hát có trong listbox trước rồi mới bấm nút phát để phát nhạc
-        {
-            try
             {
-                // Dừng phát nếu đang phát
-                player.controls.stop();
-
-                // Thiết lập file nhạc mới
-                player.URL = filePath;
-
-                // Bắt đầu phát
-                player.controls.play();
-                timer1.Interval = 1000; // cập nhật mỗi giây
-                timer1.Start();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ERROR WHILE PLAYING SONGS" + ex.Message, "ERROR",
-                              MessageBoxButtons.OK, MessageBoxIcon.Error);
+                originalSongs.Clear();
             }
         }
-        private void PlayNextSong()// tiếp tục highlight bài hát tiếp theo trong listbox nếu đã phát xong bài trước đó
-        {
-            if (playList == null || playList.CurrentSong == null)
-                return;
-
-            playList.Next(); // Chuyển sang bài tiếp theo
-
-            if (playList.CurrentSong != null)
-            {
-                listBox1.SelectedItem = playList.CurrentSong.SongTitle; // Cập nhật ListBox
-                PlaySelectedSong(playList.CurrentSong.PathToFile); // Phát nhạc
-                this.Text = "Currently playing: " + playList.CurrentSong.SongTitle; // (Tùy chọn) cập nhật tiêu đề
-            }
-            else
-            {
-                timer1.Stop();
-                MessageBox.Show("End song.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-        private void Player_PlayStateChange(int newState)// cập nhật trạng thái khi bài nhạc phát hết.
-        {
-            if (newState == 8) // MediaEnded
-            {
-                timer1.Stop();
-                // Gọi hàm PlayNextSong() nếu bạn có danh sách nhạc
-                PlayNextSong();
-            }
-        }
-
         private void btREMOVE_Click(object sender, EventArgs e)
         {
             // Kiểm tra xem người dùng đã chọn bài nào trong ListBox chưa
@@ -422,9 +308,9 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
                 string input = Interaction.InputBox(
 
 
-                    "Enter the position where you want to insert the song (0 - beginning of the list):", "insert song", "0");
+                    "Enter the position where you want to insert the song(beginning with 0):", "insert song", "0");
 
-                if (int.TryParse(input, out int index))
+                if (int.TryParse(input, out int index)) 
                 {
                     playList.Insert(index, path, title);
                     UpdateMusicListBox();
@@ -463,6 +349,28 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
             MessageBox.Show("The song list has been arranged in order of song title.");
         }
 
+        private void PlaySelectedSong(string filePath)//nút phát nhạc đang được chọn, tức là phải chọn bài hát có trong listbox trước rồi mới bấm nút phát để phát nhạc
+        {
+
+            try
+            {
+                // Dừng phát nếu đang phát
+                player.controls.stop();
+
+                // Thiết lập file nhạc mới
+                player.URL = filePath;
+
+                // Bắt đầu phát
+                player.controls.play();
+                timer1.Interval = 1000; // cập nhật mỗi giây
+                timer1.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("ERROR WHILE PLAYING SONGS" + ex.Message, "ERROR",
+                              MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
         private void btPREVIOUS_Click(object sender, EventArgs e)
         {
             if (playList == null || playList.CurrentSong == null)
@@ -550,6 +458,36 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
             }
         }
 
+        private void PlayNextSong()// tiếp tục highlight bài hát tiếp theo trong listbox nếu đã phát xong bài trước đó
+        {
+            if (playList == null || playList.CurrentSong == null)
+                return;
+
+            playList.Next(); // Chuyển sang bài tiếp theo
+
+            if (playList.CurrentSong != null)
+            {
+                listBox1.SelectedItem = playList.CurrentSong.SongTitle; // Cập nhật ListBox
+                PlaySelectedSong(playList.CurrentSong.PathToFile); // Phát nhạc
+                this.Text = "Currently playing: " + playList.CurrentSong.SongTitle; // (Tùy chọn) cập nhật tiêu đề
+            }
+            else
+            {
+                timer1.Stop();
+                MessageBox.Show("End song.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void Player_PlayStateChange(int newState)// cập nhật trạng thái khi bài nhạc phát hết.
+        {
+            if((WMPPlayState)newState == WMPPlayState.wmppsStopped) // MediaEnded
+            {
+                timer1.Stop();
+                // Gọi hàm PlayNextSong() nếu bạn có danh sách nhạc
+                PlayNextSong();
+            }
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             if (player.currentMedia != null && !isDragging)
@@ -579,5 +517,60 @@ namespace GDDA_MUSICPLAYLIST_CTDL_GT
             }
             isDragging = false;
         }
+        //giải phóng dung lượng 
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+
+            // Giải phóng media player
+            if (player != null)
+            {
+                try
+                {
+                    player.controls.stop();
+                    player.close();
+                    player = null;
+                }
+                catch { }
+
+                // Dọn dẹp tài nguyên không quản lý
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+        }
+        private void btAddAll_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "MP3 Files|*.mp3";
+            openFileDialog.Title = "Select MP3 Songs";
+            openFileDialog.Multiselect = true; // Cho phép chọn nhiều bài hát
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                foreach (string path in openFileDialog.FileNames)
+                {
+                    try
+                    {
+                        string title = Path.GetFileNameWithoutExtension(path).Trim();
+
+                        // Kiểm tra xem bài hát đã tồn tại chưa
+                        if (playList.Searching(title) != null)
+                            continue; // Bỏ qua bài hát đã tồn tại
+
+                        // Thêm bài hát mới
+                        playList.Add(path, title);
+                        listBox1.Items.Add(title);
+                    }
+
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Lỗi tại bài: " + path + "\nChi tiết: " + ex.Message);
+                    }
+                }
+
+                MessageBox.Show("Songs added successfully.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
     }
+
 }

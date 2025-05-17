@@ -90,6 +90,15 @@
             this.btSORT.Text = "SORT";
             this.btSORT.UseVisualStyleBackColor = true;
             this.btSORT.Click += new System.EventHandler(this.btSORT_Click);
+            // btAddAll
+            // 
+            this.btAddAll.Location = new System.Drawing.Point(64, 53);
+            this.btAddAll.Name = "btAddAll";
+            this.btAddAll.Size = new System.Drawing.Size(138, 32);
+            this.btAddAll.TabIndex = 12;
+            this.btAddAll.Text = "ADD";
+            this.btAddAll.UseVisualStyleBackColor = true;
+            this.btAddAll.Click += new System.EventHandler(this.btAddAll_Click);
             // 
             // btREMOVE
             // 
@@ -188,25 +197,15 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // btAddAll
-            // 
-            this.btAddAll.Location = new System.Drawing.Point(64, 53);
-            this.btAddAll.Name = "btAddAll";
-            this.btAddAll.Size = new System.Drawing.Size(138, 32);
-            this.btAddAll.TabIndex = 12;
-            this.btAddAll.Text = "ADD";
-            this.btAddAll.UseVisualStyleBackColor = true;
-            this.btAddAll.Click += new System.EventHandler(this.btAddAll_Click);
-            // 
             // btclear
             // 
             this.btclear.Location = new System.Drawing.Point(103, 394);
-            this.btclear.Name = "btclear";
+            this.btclear.Name = "btClear";
             this.btclear.Size = new System.Drawing.Size(302, 23);
             this.btclear.TabIndex = 12;
             this.btclear.Text = "CLEAR";
             this.btclear.UseVisualStyleBackColor = true;
-            this.btclear.Click += new System.EventHandler(this.btclear_Click);
+            this.btclear.Click += new System.EventHandler(this.btClear_Click);
             // 
             // Form1
             // 
